@@ -11,7 +11,9 @@ create-data: clean
 	docker volume create jenkins-data
 	docker volume create jenkins-log
 # cria um container jenkins, e entre outras coisas, monta o volume criado para logs
-run: create-data
+create: create-data
 	docker run -p 8085:8080 -p 50000:50000 --name=jenkins-master --mount source=jenkins-log,target=/var/log/jenkins --mount source=jenkins-data,target=/var/jenkins_home -d myjenkins
+run:
+	docker start jenkins-master 
 bash:
 	docker container exec -i -t jenkins-master bash
