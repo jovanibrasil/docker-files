@@ -16,4 +16,4 @@ run: clean
 start:
 	docker start jenkins-master 
 bash:
-	docker container exec -i -t jenkins-master bash
+	docker container exec -i -t --user root jenkins-master bash
