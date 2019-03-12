@@ -1,0 +1,21 @@
+<?xml version = '1.0' encoding = 'UTF-8' ?>
+<schema name='dihexample' version='1.1'>
+	<types>
+		<fieldtype name='string' class='solr.StrField'/>
+		<fieldtype name='long' class='solr.TrieLongField'/>
+		<fieldType name="text_ws" class="solr.TextField" positionIncrementGap="100">
+      		<analyzer>
+       			 <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+      		</analyzer>
+    	</fieldType>
+	</types>
+	<fields>
+		<field name='id' type='string' required='true' />
+		<field name='body' type='string' multiValued='true' indexed='true' stored='true'/>
+		<field name='title' type='string' multiValued='true' indexed='true' stored='true'/>
+		<field name='summary' type='string' multiValued='true' indexed='true' stored='true'/>
+		<copyField source='*' dest='fullText' />
+		<field name='fullText' type='text_ws'  multiValued='true' indexed='true'/>
+	</fields>
+	<uniqueKey>id</uniqueKey>
+</schema>
