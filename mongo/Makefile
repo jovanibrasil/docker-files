@@ -1,16 +1,18 @@
 stop:
-	- docker stop mongodb
+	- docker stop mongo-database
 clean: stop
-	- docker rm mongodb
+	- docker rm mongo-database
 clean-data:  clean
-	- docker volume rm mongodb-log
-	- docker volume rm mongodb-data
+	- docker volume rm mongo-database-data
 create-data: clean-data
-	docker volume create mongodb-data
-	docker volume create mongodb-log
+	docker volume create mongo-database-data
+build: clean
+	docker build -t mongo-database .
 run: clean 
-	docker run -p 27017:27017 -p 28017:28017 --name=mongodb --mount source=mongodb-log,target=/var/log/mongodb --mount source=mongodb-data,target=/var/lib/mongodb -e AUTH=no -d mongo
+	docker run -p 27017:27017 -p 28017:28017 --name=mongo-database --mount source=mongo-database-data,target=/data/db -d mongo-database
 start:
-	docker start mongodb
+	docker start mongo-database
 bash:
-	docker container exec -i -t --user root mongodb bash
+	docker container exec -i -t --user root mongo-database bash
+
+#  mongo --username admin --password --authenticationDatabase notesdb  mongodb://localhost:27017
