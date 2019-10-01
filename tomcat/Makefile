@@ -29,4 +29,4 @@ bash:
 # tomcat-users.xml
 # <role rolename="manager-script"/>
 # <role rolename="manager-gui"/>
-# <user username="jovani" password="jovani48" roles="manager-gui,manager-script"/>
+# <user username="user" password="123456" roles="manager-gui,manager-script"/>
