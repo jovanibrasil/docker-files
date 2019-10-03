@@ -25,9 +25,11 @@ clean:
 	- docker stop vault-server
 	- docker rm vault-server
 
-run: clean
-	docker run -d -p 8200:8200 --name=vault-server --network net --cap-add=IPC_LOCK -v ${CURRENT_DIR}:/vault -e 'VAULT_LOCAL_CONFIG={ "listener": [{ "tcp": { "address": "127.0.0.1:8200", "tls_disable" : 1 } }], "storage" :{ "file" : { "path" : "/vault/data" } }, "max_lease_ttl": "1000h", "default_lease_ttl": "1000h" }' vault server
-	#docker run -d -p 8200:8200 -v ${CURRENT_DIR}:/vault -m 128m --name=vault-server --cap-add=IPC_LOCK --network net vault
+run-prod: clean
+	#docker run -d -p 8200:8200 --name=vault-server --network net --cap-add=IPC_LOCK -v ${CURRENT_DIR}:/vault -e 'VAULT_LOCAL_CONFIG={ "listener": [{ "tcp": { "address": "127.0.0.1:8200", "tls_disable" : 1 } }], "storage" :{ "file" : { "path" : "/vault/data" } }, "max_lease_ttl": "1000h", "default_lease_ttl": "1000h" }' vault server
+	docker run -d -p 8200:8200 -v ${CURRENT_DIR}:/vault -m 128m --name=vault-server --cap-add=IPC_LOCK --network net vault
+run-dev:
+	docker run -d -p 8200:8200 -m 256m --name vault-server --network net -e 'VAULT_DEV_ROOT_TOKEN_ID=s8ynaMrJvQPVq2BEPRxgceHcG' -e 'VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200' vault
 start:
 	docker start vault-server
 bash:
