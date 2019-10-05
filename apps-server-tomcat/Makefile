@@ -5,7 +5,8 @@ clean: stop
 build: clean
 	docker build -t apps-server .
 run: clean
-	docker run -d -p 8090:8080 -m 256m --memory-swap 512m -e VAULT_TOKEN=${VAULT_TOKEN} --name=apps-server --network net apps-server
+	docker run -d -p 8090:8080 -m 256m --memory-swap 512m -e VAULT_TOKEN=${VAULT_TOKEN} \
+	       -e SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE} --name=apps-server --network net apps-server
 start: stop
 	docker start apps-server
 bash:
