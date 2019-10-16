@@ -56,7 +56,6 @@ start:
 bash:
 	docker exec -i -t --user root vault-server /bin/sh
 
-
 # Vault configuration tutorial: https://blog.ruanbekker.com/blog/2019/05/06/setup-hashicorp-vault-server-on-docker-and-cli-guide/
 
 #build: image publish
@@ -68,4 +67,3 @@ bash:
 #publish: 
 #	docker push $(IMAGE_TAG)_ent
 #	docker push $(IMAGE_TAG)_ent.hsm
-

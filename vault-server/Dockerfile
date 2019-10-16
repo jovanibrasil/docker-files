@@ -55,15 +55,8 @@ RUN mkdir -p /vault/logs && \
     mkdir -p /vault/config && \
     chown -R vault:vault /vault
 
+# Copy configuration file
 COPY config/vault.json /vault/config/vault.json
-
-# Expose the logs directory as a volume since there's potentially long-running
-# state in there
-#VOLUME /vault/logs
-
-# Expose the file directory as a volume since there's potentially long-running
-# state in there
-#VOLUME /vault/file
 
 # 8200/tcp is the primary interface that applications use to interact with
 # Vault.
