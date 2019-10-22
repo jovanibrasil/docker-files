@@ -24,6 +24,8 @@ IMAGE_NAME=vault-server
 VERSION=1.2.3
 IMAGE_TAG=$(REGISTRY_NAME)/$(IMAGE_NAME):$(VERSION)
 
+VAULT_DEV_ROOT_TOKEN=s8ynaMrJvQPVq2BEPRxgceHcG
+
 CURRENT_DIR=$(shell pwd)
 
 clean-data:  clean
@@ -46,10 +48,12 @@ run-prod: clean
 	 -v vault-logs:/vault/logs -v vault-data:/vault/file \
 	 --cap-add=IPC_LOCK --network net ${IMAGE_NAME}
 
-run-dev:
+run-dev: clean
 	docker run -d -p 8200:8200 -m 256m --name vault-server --network net \
-	 -e 'VAULT_DEV_ROOT_TOKEN_ID=s8ynaMrJvQPVq2BEPRxgceHcG' -e 'VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200' vault
-
+	 -e 'VAULT_DEV_ROOT_TOKEN_ID=${VAULT_DEV_ROOT_TOKEN}' -e 'VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200' vault
+	docker exec -i -t vault-server /bin/sh -c "export VAULT_ADDR='http://127.0.0.1:8200' && \
+	       vault login ${VAULT_DEV_ROOT_TOKEN} && \
+	       vault kv put secret/blog-api/dev blog-cred.url=jdbc:mysql://mysql-database:3306/blogdb blog-cred.username=root blog-cred.password=root"
 start:
 	docker start vault-server
 
