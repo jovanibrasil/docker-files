@@ -55,6 +55,7 @@ run-dev: clean
 	docker exec -i -t vault-server /bin/sh -c "export VAULT_ADDR='http://127.0.0.1:8200' && \
 	       vault login ${VAULT_DEV_ROOT_TOKEN} && \
 	       vault kv put secret/blog-api/dev blog-cred.url=jdbc:mysql://mysql-database:3306/blogdb blog-cred.username=root blog-cred.password=root && \
+	       vault kv put secret/notes-api/dev notes-cred.url=mongodb://mongo-database:55005/notesdb && \
 	       vault kv put secret/auth-api/dev auth-cred.url=jdbc:mysql://mysql-database:3306/blogdb auth-cred.password=root auth-cred.username=root auth-cred.recaptchakeysite=key auth-cred.recaptchakeysecret=key auth-cred.jwtsecretkey=key"	       
 start:
 	docker start vault-server
