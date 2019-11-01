@@ -5,8 +5,9 @@ clean: stop
 build: clean
 	docker build -t apps-server .
 run: clean
-	docker run -d -p 8090:8080 -m 896m --memory-swap 896m -e VAULT_TOKEN=${VAULT_TOKEN} \
-	       -e SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE} --name=apps-server --network net apps-server
+	docker run -d -p 8090:8080 -m 1024m --memory-swap 1024m -e VAULT_TOKEN=${VAULT_TOKEN} \
+	    -v /var/www/blog/images/banners:/apps/blog/images/banners   \
+	    -e SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE} --name=apps-server --network net apps-server
 start: stop
 	docker start apps-server
 bash:

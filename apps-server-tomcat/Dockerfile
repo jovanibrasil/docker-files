@@ -11,6 +11,7 @@ ENV VAULT_TOKEN=${VAULT_TOKEN}
 ENV VAULT_ADDR=http://vault-server:8200
 ENV SPRING_PROFILES_ACTIVE=$SPRING_PROFILES_ACTIVE
 
+RUN mkdir -p /apps/blog/images/banners/
 COPY ./configuration/ /usr/local/tomcat/conf
 
 EXPOSE 8080
