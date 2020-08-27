@@ -8,6 +8,7 @@ ENV MYSQL_ROOT_PASSWORD=root
 # All scripts in docker-entrypoint-initdb.d/ are automatically executed 
 # during container startup when the database folder is empty.
 COPY ./sql-scripts/ /docker-entrypoint-initdb.d/
+COPY ./test-data/ /var/lib/mysql-files/
 
 # Update authentication plugin
 #RUN mysqld --default-authentication-plugin=mysql_native_password

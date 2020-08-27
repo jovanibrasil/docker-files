@@ -1,0 +1,56 @@
+version: '3'
+networks:
+  default:
+    external:
+      name: net
+services:
+  postgres:
+    image: postgres
+    container_name: postgres
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - ./scripts/postgres-scripts:/docker-entrypoint-initdb.d/
+      - ./postgres-database-data:/var/lib/
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+  notes-database:
+    image: mongo-database
+    container_name: mongo-database
+    ports:
+      - 27017:27017 
+      - 28017:28017
+    environment:
+      - MONGO_INITDB_DATABASE=notesdb 
+      - CATALINA_OPTS=-Xmx206M -Xms128M -XX:MaxPermSize=50M
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+    # All scripts in docker-entrypoint-initdb.d/ are automatically executed 
+    # during container startup when the database folder is empty.
+    volumes:
+      - ./scripts/mongo-scripts:/docker-entrypoint-initdb.d/
+      - mongo-database-data:/data/db
+  rabbitmq:
+    build:
+      context: ./rabbitmq
+      dockerfile: ./Dockerfile
+    container_name: rabbitmq
+    image: rabbitmq
+    ports: 
+      - 15672:15672
+      - 5671:5671
+      - 5672:5672
+
+volumes:
+  mongo-database-data:
+    external: false
