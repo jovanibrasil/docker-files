@@ -11,7 +11,7 @@ create-data: clean-data
 build: clean
 	docker build -t mongo-database .
 run: clean 
-	docker run -p 27017:27017 -p 28017:28017 --name=mongo-database --mount source=mongo-database-data,target=/data/db -d mongo-database
+	docker run -p 27017:27017 -p 28017:28017 --name=mongo-database --mount source=mongo-database-data,target=/data/db mongo-database
 start:
 	docker start mongo-database
 bash:

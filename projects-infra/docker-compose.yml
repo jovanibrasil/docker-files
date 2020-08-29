@@ -4,6 +4,38 @@ networks:
     external:
       name: net
 services:
+  zuul-server:
+    image: jovanibrasil/zuul-server:version1.0
+    container_name: zuul-server
+    ports: 
+      - 8762:8762
+    environment:
+      - JAVA_OPTS='-XX:+UseSerialGC -Xss512k -XX:MaxRAM=72m'
+    deploy:
+      resources:
+        limits:
+          memory: 100M
+  eureka-server:
+    image: jovanibrasil/eureka-server:version1.0
+    container_name: eureka-server
+    ports: 
+      - 8761:8761
+    environment:
+      - JAVA_OPTS=-XX:+UseSerialGC -Xss512k -XX:MaxRAM=72m
+    deploy:
+      resources:
+        limits:
+          memory: 100M
+  rabbitmq:
+    build:
+      context: ./rabbitmq
+      dockerfile: ./Dockerfile
+    container_name: rabbitmq
+    image: rabbitmq
+    ports: 
+      - 15672:15672
+      - 5671:5671
+      - 5672:5672
   postgres:
     image: postgres
     container_name: postgres
@@ -20,8 +52,8 @@ services:
       resources:
         limits:
           memory: 256M
-  notes-database:
-    image: mongo-database
+  mongo-database:
+    image: mongo
     container_name: mongo-database
     ports:
       - 27017:27017 
@@ -40,17 +72,47 @@ services:
     volumes:
       - ./scripts/mongo-scripts:/docker-entrypoint-initdb.d/
       - mongo-database-data:/data/db
-  rabbitmq:
-    build:
-      context: ./rabbitmq
-      dockerfile: ./Dockerfile
-    container_name: rabbitmq
-    image: rabbitmq
-    ports: 
-      - 15672:15672
-      - 5671:5671
-      - 5672:5672
-
+  auth-api:
+    image: jovanibrasil/auth-api:version1.0
+    container_name: auth-api
+    env_file:
+      - ./environments/.auth-api-env
+    environment:
+      - JAVA_OPTS=-XX:+UseSerialGC -Xss512k -XX:MaxRAM=196m
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+    depends_on: 
+      - postgres
+  blog-api:
+    image: jovanibrasil/blog-api:version1.0
+    container_name: blog-api
+    env_file:
+      - ./environments/.blog-api-env
+    environment:
+      - JAVA_OPTS=-XX:+UseSerialGC -Xss512k -XX:MaxRAM=196m
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+    depends_on:
+      - auth-api
+      - postgres
+  notes-api:
+    image: jovanibrasil/notes-api:version1.0
+    container_name: notes-api
+    env_file:
+      - ./environments/.notes-api-env
+    environment:
+      - JAVA_OPTS=-XX:+UseSerialGC -Xss512k -XX:MaxRAM=196m
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+    depends_on:
+      - auth-api
+      - mongo-database
 volumes:
   mongo-database-data:
     external: false
