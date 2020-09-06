@@ -27,53 +27,36 @@ services:
         limits:
           memory: 100M
   rabbitmq:
-    build:
-      context: ./rabbitmq
-      dockerfile: ./Dockerfile
     container_name: rabbitmq
-    image: rabbitmq
+    image: jovanibrasil/rabbitmq:version1.0
     ports: 
       - 15672:15672
       - 5671:5671
       - 5672:5672
   postgres:
-    image: postgres
+    image: jovanibrasil/postgres-database:version1.0
     container_name: postgres
     restart: always
-    environment:
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_USER=postgres
     ports:
       - 5432:5432
-    volumes:
-      - ./scripts/postgres-scripts:/docker-entrypoint-initdb.d/
-      - ./postgres-database-data:/var/lib/
     deploy:
       resources:
         limits:
           memory: 256M
   mongo-database:
-    image: mongo
+    image: jovanibrasil/mongo-database:version1.0
     container_name: mongo-database
     ports:
       - 27017:27017 
       - 28017:28017
     environment:
-      - MONGO_INITDB_DATABASE=notesdb 
       - CATALINA_OPTS=-Xmx206M -Xms128M -XX:MaxPermSize=50M
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=root
     deploy:
       resources:
         limits:
           memory: 256M
-    # All scripts in docker-entrypoint-initdb.d/ are automatically executed 
-    # during container startup when the database folder is empty.
-    volumes:
-      - ./scripts/mongo-scripts:/docker-entrypoint-initdb.d/
-      - mongo-database-data:/data/db
   auth-api:
-    image: jovanibrasil/auth-api:version1.0
+    image: jovanibrasil/auth-api:version1.0.1
     container_name: auth-api
     env_file:
       - ./environments/.auth-api-env
@@ -113,6 +96,16 @@ services:
     depends_on:
       - auth-api
       - mongo-database
-volumes:
-  mongo-database-data:
-    external: false
+  email-api:
+    image: jovanibrasil/email-api:version1.0
+    container_name: email-api
+    env_file:
+      - ./environments/.email-api-env
+    environment:
+      - JAVA_OPTS=-XX:+UseSerialGC -Xss512k -XX:MaxRAM=72m
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+    depends_on:
+      - rabbitmq
